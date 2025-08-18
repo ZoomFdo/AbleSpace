@@ -12,7 +12,7 @@ class ReviewController extends Controller
      */
     public function index()
     {
-        //
+        return Review::all();
     }
 
     /**
@@ -28,15 +28,16 @@ class ReviewController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $review = Review::create($request->all());
+        return response()->json($review, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Review $review)
+    public function show($id)
     {
-        //
+        return Review::findOrFail($id);
     }
 
     /**
@@ -50,16 +51,19 @@ class ReviewController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Review $review)
+    public function update(Request $request, $id)
     {
-        //
+        $review = Review::findOrFail($id);
+        $review->update($request->all());
+        return response()->json($review, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Review $review)
+    public function destroy($id)
     {
-        //
+        Review::destroy($id);
+        return response()->json(null, 204);
     }
 }

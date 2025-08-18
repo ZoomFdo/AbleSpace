@@ -14,6 +14,8 @@ class Role extends Model
     protected $table = 'user_role';
     protected $primaryKey = 'role_id';
 
+    protected $fillable = ['role_name'];
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_role', 'role_id', 'user_id')->withPivot('role_name');

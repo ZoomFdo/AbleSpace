@@ -15,4 +15,16 @@ class CouponProduct extends Model
 
     protected $table = 'coupon_product';
     protected $primaryKey = 'coupon_product_id';
+
+     protected $fillable = ['coupon_id', 'product_id'];
+
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class, 'coupon_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 }

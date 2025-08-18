@@ -12,7 +12,7 @@ class CouponController extends Controller
      */
     public function index()
     {
-        //
+        return Coupon::all();
     }
 
     /**
@@ -28,15 +28,16 @@ class CouponController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $coupon = Coupon::create($request->all());
+        return response()->json($coupon, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Coupon $coupon)
+    public function show($id)
     {
-        //
+        return Coupon::findOrFail($id);
     }
 
     /**
@@ -50,16 +51,19 @@ class CouponController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Coupon $coupon)
+    public function update(Request $request, $id)
     {
-        //
+        $coupon = Coupon::findOrFail($id);
+        $coupon->update($request->all());
+        return response()->json($coupon, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Coupon $coupon)
+    public function destroy($id)
     {
-        //
+        Coupon::destroy($id);
+        return response()->json(null, 204);
     }
 }

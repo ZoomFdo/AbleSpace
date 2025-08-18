@@ -12,4 +12,7 @@ class Language extends Model
 
     protected $table = 'languages';
     protected $primaryKey = 'language_code';
+    public $incrementing = false;
+
+    protected $fillable = ['language_code', 'language_name', 'locale', 'is_default'];
 }

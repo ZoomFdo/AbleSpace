@@ -12,7 +12,7 @@ class CategoryProductController extends Controller
      */
     public function index()
     {
-        //
+        return CategoryProduct::all();
     }
 
     /**
@@ -28,15 +28,16 @@ class CategoryProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $categoryProduct = CategoryProduct::create($request->all());
+        return response()->json($categoryProduct, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(CategoryProduct $categoryProduct)
+    public function show($id)
     {
-        //
+        return CategoryProduct::findOrFail($id);
     }
 
     /**
@@ -50,16 +51,19 @@ class CategoryProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CategoryProduct $categoryProduct)
+    public function update(Request $request, $id)
     {
-        //
+        $categoryProduct = CategoryProduct::findOrFail($id);
+        $categoryProduct->update($request->all());
+        return response()->json($categoryProduct, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CategoryProduct $categoryProduct)
+    public function destroy($id)
     {
-        //
+        CategoryProduct::destroy($id);
+        return response()->json(null, 204);
     }
 }

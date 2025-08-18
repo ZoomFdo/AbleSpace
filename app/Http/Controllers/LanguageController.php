@@ -12,7 +12,7 @@ class LanguageController extends Controller
      */
     public function index()
     {
-        //
+        return Language::all();
     }
 
     /**
@@ -28,15 +28,16 @@ class LanguageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $language = Language::create($request->all());
+        return response()->json($language, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Language $language)
+    public function show($id)
     {
-        //
+        return Language::findOrFail($id);
     }
 
     /**
@@ -50,16 +51,19 @@ class LanguageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Language $language)
+    public function update(Request $request, $id)
     {
-        //
+        $language = Language::findOrFail($id);
+        $language->update($request->all());
+        return response()->json($language, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Language $language)
+    public function destroy($id)
     {
-        //
+        Language::destroy($id);
+        return response()->json(null, 204);
     }
 }

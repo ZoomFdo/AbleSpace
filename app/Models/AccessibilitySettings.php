@@ -12,4 +12,12 @@ class AccessibilitySettings extends Model
 
     protected $table = 'accessibility_settings';
     protected $primaryKey = 'user_id';
+    public $incrementing = false;
+
+    protected $fillable = ['user_id', 'theme', 'text_size', 'voice_enabled'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

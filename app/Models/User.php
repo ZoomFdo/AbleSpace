@@ -33,9 +33,34 @@ class User extends Model
         'failed_attempts'      => 'integer'
     ];
 
+    
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
-        // return $this->hasOne(UserAuth::class, 'user_id', 'user_id');
+    }
+
+    public function auth()
+    {
+        return $this->hasMany(UserAuth::class, 'user_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'user_id');
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class, 'user_id');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id');
+    }  
+
+    public function accessibilitySettings()
+    {
+        return $this->hasOne(AccessibilitySettings::class, 'user_id');
     }
 }

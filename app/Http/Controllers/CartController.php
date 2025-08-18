@@ -12,7 +12,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        //
+        return Cart::all();
     }
 
     /**
@@ -28,15 +28,16 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $cart = Cart::create($request->all());
+        return response()->json($cart, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Cart $cart)
+    public function show($id)
     {
-        //
+        return Cart::findOrFail($id);
     }
 
     /**
@@ -50,16 +51,19 @@ class CartController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cart $cart)
+    public function update(Request $request, $id)
     {
-        //
+        $cart = Cart::findOrFail($id);
+        $cart->update($request->all());
+        return response()->json($cart, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Cart $cart)
+    public function destroy($id)
     {
-        //
+        Cart::destroy($id);
+        return response()->json(null, 204);
     }
 }
