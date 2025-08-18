@@ -2,47 +2,40 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class User extends Authenticatable
+class User extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    protected $table = 'users';
+    protected $primaryKey = 'user_id';
+
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'name', 'surname', 'registration_date', 'last_seen', 'is_active',
+        'method', 'identifier', 'email', 'phone', 'is_email_verified',
+        'created_date', 'updated_date', 'last_password_change',
+        'failed_attempts', 'locked_until', 'mfa_secret',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
+    protected $casts = [
+        'is_active'            => 'boolean',
+        'is_email_verified'    => 'boolean',
+        'registration_date'    => 'datetime',
+        'last_seen'            => 'datetime',
+        'created_date'         => 'datetime',
+        'updated_date'         => 'datetime',
+        'last_password_change' => 'datetime',
+        'locked_until'         => 'datetime',
+        'failed_attempts'      => 'integer'
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function roles(): BelongsToMany
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
+        // return $this->hasOne(UserAuth::class, 'user_id', 'user_id');
     }
 }
