@@ -12,7 +12,7 @@ class RoleUserController extends Controller
      */
     public function index()
     {
-        //
+        return RoleUser::all();
     }
 
     /**
@@ -28,15 +28,16 @@ class RoleUserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $roleUser = RoleUser::create($request->all());
+        return response()->json($roleUser, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(RoleUser $roleUser)
+    public function show($id)
     {
-        //
+        return RoleUser::findOrFail($id);
     }
 
     /**
@@ -50,16 +51,19 @@ class RoleUserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, RoleUser $roleUser)
+    public function update(Request $request, $id)
     {
-        //
+        $roleUser = RoleUser::findOrFail($id);
+        $roleUser->update($request->all());
+        return response()->json($roleUser, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RoleUser $roleUser)
+    public function destroy($id)
     {
-        //
+        RoleUser::destroy($id);
+        return response()->json(null, 204);
     }
 }

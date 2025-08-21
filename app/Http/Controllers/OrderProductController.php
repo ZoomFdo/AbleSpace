@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\OrderProduct;
 use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\Return_;
 
 class OrderProductController extends Controller
 {
@@ -12,7 +13,7 @@ class OrderProductController extends Controller
      */
     public function index()
     {
-        //
+        return OrderProduct::all();
     }
 
     /**
@@ -28,15 +29,16 @@ class OrderProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $orderProduct = OrderProduct::create($request->all());
+        return response()->json($orderProduct, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(OrderProduct $orderProduct)
+    public function show($id)
     {
-        //
+        return OrderProduct::findOrFail($id);
     }
 
     /**
@@ -50,16 +52,19 @@ class OrderProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, OrderProduct $orderProduct)
+    public function update(Request $request, $id)
     {
-        //
+        $orderProduct = OrderProduct::findOrFail($id);
+        $orderProduct->update($request->all());
+        return response()->json($orderProduct, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(OrderProduct $orderProduct)
+    public function destroy($id)
     {
-        //
+        OrderProduct::destroy($id);
+        return response()->json(null, 204);
     }
 }

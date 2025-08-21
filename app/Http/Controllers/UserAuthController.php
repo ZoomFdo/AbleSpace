@@ -13,7 +13,12 @@ class UserAuthController extends Controller
         return UserAuth::all();
     }
 
-    
+    public function create()
+    {
+        // This method can be used to return a view for creating a new UserAuth
+        // Not typically used in API controllers
+    }
+
     public function store(Request $request)
     {
         $auth = UserAuth::create($request->all());
