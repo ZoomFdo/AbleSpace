@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Order;
+use App\Models\Cart;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class OrderController extends Controller
+class CartController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Order::all();
+        return Cart::all();
     }
 
     /**
@@ -28,8 +29,8 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $order = Order::create($request->all());
-        return response()->json($order, 201);
+        $cart = Cart::create($request->all());
+        return response()->json($cart, 201);
     }
 
     /**
@@ -37,13 +38,13 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        return Order::findOrFail($id);
+        return Cart::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Order $order)
+    public function edit(Cart $cart)
     {
         //
     }
@@ -53,9 +54,9 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
-        $order->update($request->all());
-        return response()->json($order, 200);
+        $cart = Cart::findOrFail($id);
+        $cart->update($request->all());
+        return response()->json($cart, 200);
     }
 
     /**
@@ -63,7 +64,7 @@ class OrderController extends Controller
      */
     public function destroy($id)
     {
-        Order::destroy($id);
+        Cart::destroy($id);
         return response()->json(null, 204);
     }
 }

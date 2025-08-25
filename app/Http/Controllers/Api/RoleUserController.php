@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Coupon;
+use App\Models\RoleUser;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class CouponController extends Controller
+class RoleUserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Coupon::all();
+        return RoleUser::all();
     }
 
     /**
@@ -28,8 +29,8 @@ class CouponController extends Controller
      */
     public function store(Request $request)
     {
-        $coupon = Coupon::create($request->all());
-        return response()->json($coupon, 201);
+        $roleUser = RoleUser::create($request->all());
+        return response()->json($roleUser, 201);
     }
 
     /**
@@ -37,13 +38,13 @@ class CouponController extends Controller
      */
     public function show($id)
     {
-        return Coupon::findOrFail($id);
+        return RoleUser::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Coupon $coupon)
+    public function edit(RoleUser $roleUser)
     {
         //
     }
@@ -53,9 +54,9 @@ class CouponController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $coupon = Coupon::findOrFail($id);
-        $coupon->update($request->all());
-        return response()->json($coupon, 200);
+        $roleUser = RoleUser::findOrFail($id);
+        $roleUser->update($request->all());
+        return response()->json($roleUser, 200);
     }
 
     /**
@@ -63,7 +64,7 @@ class CouponController extends Controller
      */
     public function destroy($id)
     {
-        Coupon::destroy($id);
+        RoleUser::destroy($id);
         return response()->json(null, 204);
     }
 }

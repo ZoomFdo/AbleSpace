@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Review;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class ReviewController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Review::all();
+        return Category::all();
     }
 
     /**
@@ -28,8 +29,8 @@ class ReviewController extends Controller
      */
     public function store(Request $request)
     {
-        $review = Review::create($request->all());
-        return response()->json($review, 201);
+        $category = Category::create($request->all());
+        return response()->json($category, 201);
     }
 
     /**
@@ -37,13 +38,13 @@ class ReviewController extends Controller
      */
     public function show($id)
     {
-        return Review::findOrFail($id);
+        return Category::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Review $review)
+    public function edit(Category $category)
     {
         //
     }
@@ -53,9 +54,9 @@ class ReviewController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $review = Review::findOrFail($id);
-        $review->update($request->all());
-        return response()->json($review, 200);
+        $category = Category::findOrFail($id);
+        $category->update($request->all());
+        return response()->json($category, 200);
     }
 
     /**
@@ -63,7 +64,7 @@ class ReviewController extends Controller
      */
     public function destroy($id)
     {
-        Review::destroy($id);
+        Category::destroy($id);
         return response()->json(null, 204);
     }
 }

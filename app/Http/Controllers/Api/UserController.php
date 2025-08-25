@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\OrderProduct;
+use App\Models\User;
 use Illuminate\Http\Request;
-use PhpParser\Node\Stmt\Return_;
+use App\Http\Controllers\Controller;
 
-class OrderProductController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return OrderProduct::all();
+        return User::all();
     }
 
     /**
@@ -29,8 +29,8 @@ class OrderProductController extends Controller
      */
     public function store(Request $request)
     {
-        $orderProduct = OrderProduct::create($request->all());
-        return response()->json($orderProduct, 201);
+        $user = User::create($request->all());
+        return response()->json($user, 201);
     }
 
     /**
@@ -38,13 +38,13 @@ class OrderProductController extends Controller
      */
     public function show($id)
     {
-        return OrderProduct::findOrFail($id);
+        return User::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(OrderProduct $orderProduct)
+    public function edit(User $user)
     {
         //
     }
@@ -54,9 +54,9 @@ class OrderProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $orderProduct = OrderProduct::findOrFail($id);
-        $orderProduct->update($request->all());
-        return response()->json($orderProduct, 200);
+        $user = User::findOrFail($id);
+        $user->update($request->all());
+        return response()->json($user, 200);
     }
 
     /**
@@ -64,7 +64,7 @@ class OrderProductController extends Controller
      */
     public function destroy($id)
     {
-        OrderProduct::destroy($id);
+        User::destroy($id);
         return response()->json(null, 204);
     }
 }

@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Category;
+use App\Models\OrderProduct;
 use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\Return_;
+use App\Http\Controllers\Controller;
 
-class CategoryController extends Controller
+class OrderProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Category::all();
+        return OrderProduct::all();
     }
 
     /**
@@ -28,8 +30,8 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $category = Category::create($request->all());
-        return response()->json($category, 201);
+        $orderProduct = OrderProduct::create($request->all());
+        return response()->json($orderProduct, 201);
     }
 
     /**
@@ -37,13 +39,13 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        return Category::findOrFail($id);
+        return OrderProduct::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(OrderProduct $orderProduct)
     {
         //
     }
@@ -53,9 +55,9 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $category = Category::findOrFail($id);
-        $category->update($request->all());
-        return response()->json($category, 200);
+        $orderProduct = OrderProduct::findOrFail($id);
+        $orderProduct->update($request->all());
+        return response()->json($orderProduct, 200);
     }
 
     /**
@@ -63,7 +65,7 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        Category::destroy($id);
+        OrderProduct::destroy($id);
         return response()->json(null, 204);
     }
 }

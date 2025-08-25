@@ -1,15 +1,46 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\ConfirmablePasswordController;
-use App\Http\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\AuthWeb\AuthenticatedSessionController;
+use App\Http\Controllers\AuthWeb\ConfirmablePasswordController;
+use App\Http\Controllers\AuthWeb\EmailVerificationNotificationController;
+use App\Http\Controllers\AuthWeb\EmailVerificationPromptController;
+use App\Http\Controllers\AuthWeb\NewPasswordController;
+use App\Http\Controllers\AuthWeb\PasswordResetLinkController;
+use App\Http\Controllers\AuthWeb\RegisteredUserController;
+use App\Http\Controllers\AuthWeb\VerifyEmailController;
+
+use App\Http\Controllers\AuthApi\RegisterController;
+use App\Http\Controllers\AuthApi\LoginController;
+use App\Http\Controllers\AuthApi\LogoutController;
+use App\Http\Controllers\AuthApi\PasswordResetController;
+use App\Http\Controllers\AuthApi\EmailVerificationController;
 use Illuminate\Support\Facades\Route;
 
+// API Authentication Routes
+
+// API routes for guest
+Route::prefix('api')->middleware('guest')->group(function () {
+    Route::post('/register', [RegisterController::class, 'register']);
+    Route::post('/login', [LoginController::class, 'login']);
+
+    Route::post('/password/email', [PasswordResetController::class, 'sendResetLink']);
+    Route::post('/password/reset', [PasswordResetController::class, 'reset']);
+});
+
+// API routes for authentificated user (Sanctum)
+Route::prefix('api')->middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [LogoutController::class, 'logout']);
+    Route::get('/me', function (\Illuminate\Http\Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/email/verify/resend', [EmailVerificationController::class, 'resend']);
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+        ->name('verification.verify');
+});
+
+
+// Web Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');

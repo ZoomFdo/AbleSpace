@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Language;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
-class LanguageController extends Controller
+class OrderController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Language::all();
+        return Order::all();
     }
 
     /**
@@ -28,8 +28,8 @@ class LanguageController extends Controller
      */
     public function store(Request $request)
     {
-        $language = Language::create($request->all());
-        return response()->json($language, 201);
+        $order = Order::create($request->all());
+        return response()->json($order, 201);
     }
 
     /**
@@ -37,13 +37,13 @@ class LanguageController extends Controller
      */
     public function show($id)
     {
-        return Language::findOrFail($id);
+        return Order::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Language $language)
+    public function edit(Order $order)
     {
         //
     }
@@ -53,9 +53,9 @@ class LanguageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $language = Language::findOrFail($id);
-        $language->update($request->all());
-        return response()->json($language, 200);
+        $order = Order::findOrFail($id);
+        $order->update($request->all());
+        return response()->json($order, 200);
     }
 
     /**
@@ -63,7 +63,7 @@ class LanguageController extends Controller
      */
     public function destroy($id)
     {
-        Language::destroy($id);
+        Order::destroy($id);
         return response()->json(null, 204);
     }
 }

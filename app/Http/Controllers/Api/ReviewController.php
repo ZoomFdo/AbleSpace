@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class ProductController extends Controller
+class ReviewController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Product::all();
+        return Review::all();
     }
 
     /**
@@ -28,8 +29,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = Product::create($request->all());
-        return response()->json($product, 201);
+        $review = Review::create($request->all());
+        return response()->json($review, 201);
     }
 
     /**
@@ -37,13 +38,13 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        return Product::findOrFail($id);
+        return Review::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(Review $review)
     {
         //
     }
@@ -53,9 +54,9 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
-        $product->update($request->all());
-        return response()->json($product, 200);
+        $review = Review::findOrFail($id);
+        $review->update($request->all());
+        return response()->json($review, 200);
     }
 
     /**
@@ -63,7 +64,7 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        Product::destroy($id);
+        Review::destroy($id);
         return response()->json(null, 204);
     }
 }

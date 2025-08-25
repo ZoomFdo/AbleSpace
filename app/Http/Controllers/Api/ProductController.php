@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\AccessibilitySettings;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class AccessibilitySettingsController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return AccessibilitySettings::all();
+        return Product::all();
     }
 
     /**
@@ -28,8 +29,8 @@ class AccessibilitySettingsController extends Controller
      */
     public function store(Request $request)
     {
-        $accessibilitySettings = AccessibilitySettings::create($request->all());
-        return response()->json($accessibilitySettings, 201);
+        $product = Product::create($request->all());
+        return response()->json($product, 201);
     }
 
     /**
@@ -37,13 +38,13 @@ class AccessibilitySettingsController extends Controller
      */
     public function show($id)
     {
-        return AccessibilitySettings::findOrFail($id);
+        return Product::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(AccessibilitySettings $accessibilitySettings)
+    public function edit(Product $product)
     {
         //
     }
@@ -53,9 +54,9 @@ class AccessibilitySettingsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $accessibilitySettings = AccessibilitySettings::findOrFail($id);
-        $accessibilitySettings->update($request->all());
-        return response()->json($accessibilitySettings, 200);
+        $product = Product::findOrFail($id);
+        $product->update($request->all());
+        return response()->json($product, 200);
     }
 
     /**
@@ -63,7 +64,7 @@ class AccessibilitySettingsController extends Controller
      */
     public function destroy($id)
     {
-        AccessibilitySettings::destroy($id);
+        Product::destroy($id);
         return response()->json(null, 204);
     }
 }

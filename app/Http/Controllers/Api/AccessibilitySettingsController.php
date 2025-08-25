@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\User;
+use App\Models\AccessibilitySettings;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class UserController extends Controller
+class AccessibilitySettingsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return User::all();
+        return AccessibilitySettings::all();
     }
 
     /**
@@ -28,8 +29,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::create($request->all());
-        return response()->json($user, 201);
+        $accessibilitySettings = AccessibilitySettings::create($request->all());
+        return response()->json($accessibilitySettings, 201);
     }
 
     /**
@@ -37,13 +38,13 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return User::findOrFail($id);
+        return AccessibilitySettings::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(AccessibilitySettings $accessibilitySettings)
     {
         //
     }
@@ -53,9 +54,9 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-        $user->update($request->all());
-        return response()->json($user, 200);
+        $accessibilitySettings = AccessibilitySettings::findOrFail($id);
+        $accessibilitySettings->update($request->all());
+        return response()->json($accessibilitySettings, 200);
     }
 
     /**
@@ -63,7 +64,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        User::destroy($id);
+        AccessibilitySettings::destroy($id);
         return response()->json(null, 204);
     }
 }

@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\CouponProduct;
+use App\Models\Coupon;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class CouponProductController extends Controller
+class CouponController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return CouponProduct::all();
+        return Coupon::all();
     }
 
     /**
@@ -28,8 +29,8 @@ class CouponProductController extends Controller
      */
     public function store(Request $request)
     {
-        $couponProduct = CouponProduct::create($request->all());
-        return response()->json($couponProduct, 201);
+        $coupon = Coupon::create($request->all());
+        return response()->json($coupon, 201);
     }
 
     /**
@@ -37,13 +38,13 @@ class CouponProductController extends Controller
      */
     public function show($id)
     {
-        return CouponProduct::findOrFail($id);
+        return Coupon::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(CouponProduct $couponProduct)
+    public function edit(Coupon $coupon)
     {
         //
     }
@@ -53,9 +54,9 @@ class CouponProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $couponProduct = CouponProduct::findOrFail($id);
-        $couponProduct->update($request->all());
-        return response()->json($couponProduct, 200);
+        $coupon = Coupon::findOrFail($id);
+        $coupon->update($request->all());
+        return response()->json($coupon, 200);
     }
 
     /**
@@ -63,7 +64,7 @@ class CouponProductController extends Controller
      */
     public function destroy($id)
     {
-        CouponProduct::destroy($id);
+        Coupon::destroy($id);
         return response()->json(null, 204);
     }
 }

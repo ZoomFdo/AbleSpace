@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Role;
+use App\Models\CategoryProduct;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class RoleController extends Controller
+class CategoryProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Role::all();
+        return CategoryProduct::all();
     }
 
     /**
@@ -28,8 +29,8 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $role = Role::create($request->all());
-        return response()->json($role, 201);
+        $categoryProduct = CategoryProduct::create($request->all());
+        return response()->json($categoryProduct, 201);
     }
 
     /**
@@ -37,13 +38,13 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        return Role::findOrFail($id);
+        return CategoryProduct::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Role $role)
+    public function edit(CategoryProduct $categoryProduct)
     {
         //
     }
@@ -53,9 +54,9 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $role = Role::findOrFail($id);
-        $role->update($request->all());
-        return response()->json($role, 200);
+        $categoryProduct = CategoryProduct::findOrFail($id);
+        $categoryProduct->update($request->all());
+        return response()->json($categoryProduct, 200);
     }
 
     /**
@@ -63,7 +64,7 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        Role::destroy($id);
+        CategoryProduct::destroy($id);
         return response()->json(null, 204);
     }
 }

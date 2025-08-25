@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\RoleUser;
+use App\Models\Language;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class RoleUserController extends Controller
+class LanguageController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return RoleUser::all();
+        return Language::all();
     }
 
     /**
@@ -28,8 +29,8 @@ class RoleUserController extends Controller
      */
     public function store(Request $request)
     {
-        $roleUser = RoleUser::create($request->all());
-        return response()->json($roleUser, 201);
+        $language = Language::create($request->all());
+        return response()->json($language, 201);
     }
 
     /**
@@ -37,13 +38,13 @@ class RoleUserController extends Controller
      */
     public function show($id)
     {
-        return RoleUser::findOrFail($id);
+        return Language::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(RoleUser $roleUser)
+    public function edit(Language $language)
     {
         //
     }
@@ -53,9 +54,9 @@ class RoleUserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $roleUser = RoleUser::findOrFail($id);
-        $roleUser->update($request->all());
-        return response()->json($roleUser, 200);
+        $language = Language::findOrFail($id);
+        $language->update($request->all());
+        return response()->json($language, 200);
     }
 
     /**
@@ -63,7 +64,7 @@ class RoleUserController extends Controller
      */
     public function destroy($id)
     {
-        RoleUser::destroy($id);
+        Language::destroy($id);
         return response()->json(null, 204);
     }
 }

@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Cart;
+use App\Models\CouponProduct;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class CartController extends Controller
+class CouponProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Cart::all();
+        return CouponProduct::all();
     }
 
     /**
@@ -28,8 +29,8 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        $cart = Cart::create($request->all());
-        return response()->json($cart, 201);
+        $couponProduct = CouponProduct::create($request->all());
+        return response()->json($couponProduct, 201);
     }
 
     /**
@@ -37,13 +38,13 @@ class CartController extends Controller
      */
     public function show($id)
     {
-        return Cart::findOrFail($id);
+        return CouponProduct::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Cart $cart)
+    public function edit(CouponProduct $couponProduct)
     {
         //
     }
@@ -53,9 +54,9 @@ class CartController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $cart = Cart::findOrFail($id);
-        $cart->update($request->all());
-        return response()->json($cart, 200);
+        $couponProduct = CouponProduct::findOrFail($id);
+        $couponProduct->update($request->all());
+        return response()->json($couponProduct, 200);
     }
 
     /**
@@ -63,7 +64,7 @@ class CartController extends Controller
      */
     public function destroy($id)
     {
-        Cart::destroy($id);
+        CouponProduct::destroy($id);
         return response()->json(null, 204);
     }
 }
