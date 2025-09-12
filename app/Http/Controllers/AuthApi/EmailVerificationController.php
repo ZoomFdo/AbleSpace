@@ -4,27 +4,61 @@ namespace App\Http\Controllers\AuthApi;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Models\PendingUser;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerifyEmail;
 
 class EmailVerificationController extends Controller
 {
-     public function verify(EmailVerificationRequest $request)
+    /**
+     * Підтвердження email користувача
+     */
+    public function verify(Request $request)
     {
-        $request->fulfill();
+        $token = $request->query('token');
+        $email = $request->query('email');
 
-        return response()->json(['message' => 'Email verified successfully']);
+        $pendingUser = PendingUser::where('email', $email)
+                                  ->where('email_verification_token', $token)
+                                  ->first();
+
+        if (!$pendingUser) {
+            return response()->json(['message' => 'Invalid verification link'], 422);
+        }
+
+        // Створюємо постійного користувача
+        $user = User::create([
+            'name' => $pendingUser->name,
+            'surname' => $pendingUser->surname ?? null,
+            'email' => $pendingUser->email,
+            'password' => $pendingUser->password,
+            'registration_date' => now(),
+            'is_active' => true,
+        ]);
+
+        // Видаляємо запис з pending_users
+        $pendingUser->delete();
+
+        return response()->json(['message' => 'Email verified successfully', 'user' => $user]);
     }
 
     /**
-     * Надіслати повторно лист для підтвердження
+     * Повторна відправка листа для підтвердження
      */
     public function resend(Request $request)
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified']);
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $pendingUser = PendingUser::where('email', $request->email)->first();
+
+        if (!$pendingUser) {
+            return response()->json(['message' => 'Email not found or already verified'], 422);
         }
 
-        $request->user()->sendEmailVerificationNotification();
+        Mail::to($pendingUser->email)->send(new VerifyEmail($pendingUser));
 
         return response()->json(['message' => 'Verification link resent']);
     }

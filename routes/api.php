@@ -17,35 +17,30 @@ use App\Http\Controllers\AuthApi\PasswordResetController;
 use App\Http\Controllers\AuthApi\LogoutController;
 use App\Http\Controllers\AuthApi\EmailVerificationController;
 
-//Auth API
-Route::post('/register', [RegisterController::class, 'register']);
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/password/email', [PasswordResetController::class, 'sendResetLink']);
-Route::post('/password/reset', [PasswordResetController::class, 'reset']);
+// Auth API для гостей
+Route::prefix('v1/auth')->group(function () {
+    Route::post('/register', [RegisterController::class, 'register']);
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/password/email', [PasswordResetController::class, 'sendResetLink']);
+    Route::post('/password/reset', [PasswordResetController::class, 'reset']);
+    Route::get('/verify-email', [EmailVerificationController::class, 'verify']);
+});
 
-//Authenticated API (Sanctum)
-Route::middleware('auth:sanctum')->group(function () {
+// Authenticated API (Sanctum)
+Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
+    Route::get('/me', fn(Request $request) => $request->user());
     Route::post('/logout', [LogoutController::class, 'logout']);
-    Route::get('/me', function(Request $request) {
-        return $request->user();
-    });
+    Route::post('/email/verify/resend', [EmailVerificationController::class, 'resend']);
+
+    // CRUD ресурси
+    Route::apiResource('accessibility-settings', AccessibilitySettingsController::class);
+    Route::apiResource('cart-products', CartProductController::class);
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('category-products', CategoryProductController::class);
+    Route::apiResource('coupon-products', CouponProductController::class);
+    Route::apiResource('languages', LanguageController::class);
+    Route::apiResource('order-products', OrderProductController::class);
+    Route::apiResource('roles', RoleController::class);
+    Route::apiResource('role-users', RoleUserController::class);
 });
 
-Route::middleware('auth:sanctum')->group(function () {
-Route::post('/email/verify/resend', [EmailVerificationController::class, 'resend']);
-Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-    ->name('verification.verify');
-});
-
-//Resource API
-Route::prefix('v1')->group(function () {
-Route::apiResource('accessibility-settings', AccessibilitySettingsController::class);
-Route::apiResource('cart-products', CartProductController::class);
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('category-products', CategoryProductController::class);
-Route::apiResource('coupon-products', CouponProductController::class);
-Route::apiResource('languages', LanguageController::class);
-Route::apiResource('order-products', OrderProductController::class);
-Route::apiResource('roles', RoleController::class);
-Route::apiResource('role-users', RoleUserController::class);
-});

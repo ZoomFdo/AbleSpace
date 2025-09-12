@@ -3,23 +3,23 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Foundation\Auth\User as Authenticatable; // замінюємо базовий клас
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Contracts\Auth\MustVerifyEmail; // додаємо інтерфейс
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class User extends Model
+class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory;
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'users';
     protected $primaryKey = 'user_id';
 
     protected $fillable = [
         'name', 'surname', 'registration_date', 'last_seen', 'is_active',
-        'method', 'identifier', 'email', 'phone', 'is_email_verified',
+        'method', 'identifier', 'email', 'phone',
+        'is_email_verified', 
         'created_date', 'updated_date', 'last_password_change',
         'failed_attempts', 'locked_until', 'mfa_secret',
     ];
@@ -36,10 +36,9 @@ class User extends Model
         'failed_attempts'      => 'integer'
     ];
 
-    
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'user_user_role', 'user_id', 'role_id'); //so so 
+        return $this->belongsToMany(Role::class, 'user_user_role', 'user_id', 'role_id');
     }
 
     public function auth()
@@ -60,7 +59,7 @@ class User extends Model
     public function orders()
     {
         return $this->hasMany(Order::class, 'user_id');
-    }  
+    }
 
     public function accessibilitySettings()
     {
