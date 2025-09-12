@@ -30,6 +30,8 @@ return Application::configure(basePath: dirname(__DIR__))
         EnsureFrontendRequestsAreStateful::class, //SPA and token
         SubstituteBindings::class,
     ]);
+
+    $middleware->alias('isAdmin', \App\Http\Middleware\IsAdmin::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\AccessibilitySettingsController;
 use App\Http\Controllers\Api\CartProductController;
 use App\Http\Controllers\Api\CategoryController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Api\LanguageController;
 use App\Http\Controllers\Api\OrderProductController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\RoleUserController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\AuthApi\RegisterController;
 use App\Http\Controllers\AuthApi\LoginController;
 use App\Http\Controllers\AuthApi\PasswordResetController;
@@ -32,6 +34,11 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout']);
     Route::post('/email/verify/resend', [EmailVerificationController::class, 'resend']);
 
+     // Профіль
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
+
     // CRUD ресурси
     Route::apiResource('accessibility-settings', AccessibilitySettingsController::class);
     Route::apiResource('cart-products', CartProductController::class);
@@ -42,5 +49,12 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::apiResource('order-products', OrderProductController::class);
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('role-users', RoleUserController::class);
+});
+
+// Admin
+Route::middleware(['auth:sanctum', 'isAdmin'])->prefix('v1/admin')->group(function () {
+    Route::get('/users', [AdminUserController::class, 'index']);
+    Route::post('/users/{id}/block', [AdminUserController::class, 'block']);
+    Route::post('/users/{id}/unblock', [AdminUserController::class, 'unblock']);
 });
 
