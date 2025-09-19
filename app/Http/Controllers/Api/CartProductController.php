@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\CartProduct;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -11,9 +12,13 @@ class CartProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return CartProduct::all();
+        $user = $request->user();
+
+        return CartProduct::with('product')
+            ->whereHas('cart', fn($q) => $q->where('user_id', $user->id))
+            ->get();
     }
 
     /**
@@ -27,18 +32,49 @@ class CartProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request) //11111111111111111111111111111111
     {
-        $cartProduct = CartProduct::create($request->all());
-        return response()->json($cartProduct, 201);
+        $user = $request->user();
+
+        $data = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity'   => 'required|integer|min:1',
+        ]);
+
+        // Find the user's basket (or create, if does not exist)
+        $cart = Cart::firstOrCreate(['user_id' => $user->id]);
+
+        //Сheck if the item in the cart
+        $cartProduct = CartProduct::where('cart_id', $cart->id)
+            ->where('product_id', $data['product_id'])
+            ->first();
+
+        if ($cartProduct) {
+            $cartProduct->update([
+                'quantity' => $cartProduct->quantity + $data['quantity'],
+            ]);
+        } else {
+            $cartProduct = CartProduct::create([
+                'cart_id'    => $cart->id,
+                'product_id' => $data['product_id'],
+                'quantity'   => $data['quantity'],
+            ]);
+        }
+
+        return response()->json($cartProduct->load('product'), 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        return CartProduct::findOrFail($id);
+        $user = $request->user();
+
+        return CartProduct::with('product')
+            ->where('id', $id)
+            ->whereHas('cart', fn($q) => $q->where('user_id', $user->id))
+            ->firstOrFail();
     }
 
     /**
@@ -54,17 +90,34 @@ class CartProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $cartProduct = CartProduct::findOrFail($id);
-        $cartProduct->update($request->all());
-        return response()->json($cartProduct, 200);
+        $user = $request->user();
+
+        $data = $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cartProduct = CartProduct::where('id', $id)
+            ->whereHas('cart', fn($q) => $q->where('user_id', $user->id))
+            ->firstOrFail();
+
+        $cartProduct->update($data);
+
+        return response()->json($cartProduct->load('product'), 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        CartProduct::destroy($id);
+        $user = $request->user();
+
+        $cartProduct = CartProduct::where('id', $id)
+            ->whereHas('cart', fn($q) => $q->where('user_id', $user->id))
+            ->firstOrFail();
+
+        $cartProduct->delete();
+
         return response()->json(null, 204);
     }
 }

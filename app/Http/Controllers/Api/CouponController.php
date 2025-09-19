@@ -29,7 +29,14 @@ class CouponController extends Controller
      */
     public function store(Request $request)
     {
-        $coupon = Coupon::create($request->all());
+        $data = $request->validate([
+            'code'       => 'required|string|max:50|unique:coupons,code',
+            'discount'   => 'required|numeric|min:1|max:100', // у відсотках
+            'expires_at' => 'nullable|date|after:today',
+        ]);
+
+        $coupon = Coupon::create($data);
+
         return response()->json($coupon, 201);
     }
 
@@ -55,7 +62,15 @@ class CouponController extends Controller
     public function update(Request $request, $id)
     {
         $coupon = Coupon::findOrFail($id);
-        $coupon->update($request->all());
+
+        $data = $request->validate([
+            'code'       => 'sometimes|required|string|max:50|unique:coupons,code,' . $coupon->id,
+            'discount'   => 'sometimes|required|numeric|min:1|max:100',
+            'expires_at' => 'nullable|date|after:today',
+        ]);
+
+        $coupon->update($data);
+
         return response()->json($coupon, 200);
     }
 
@@ -64,7 +79,32 @@ class CouponController extends Controller
      */
     public function destroy($id)
     {
-        Coupon::destroy($id);
+        $coupon = Coupon::findOrFail($id);
+        $coupon->delete();
+
         return response()->json(null, 204);
+    }
+
+
+     /**
+     * Перевірка купона (для фронтенду при оформленні замовлення)
+     */
+    public function validateCoupon(Request $request)
+    {
+        $data = $request->validate([
+            'code' => 'required|string'
+        ]);
+
+        $coupon = Coupon::where('code', $data['code'])
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>=', now());
+            })
+            ->first();
+
+        if (!$coupon) {
+            return response()->json(['message' => 'Coupon is invalid or expired'], 404);
+        }
+
+        return response()->json($coupon, 200);
     }
 }

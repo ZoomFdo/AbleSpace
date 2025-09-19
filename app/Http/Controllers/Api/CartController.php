@@ -11,9 +11,13 @@ class CartController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Cart::all();
+        $user = $request->user();
+
+        return Cart::with('product')
+            ->where('user_id', $user->id)
+            ->get();
     }
 
     /**
@@ -29,16 +33,44 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        $cart = Cart::create($request->all());
-        return response()->json($cart, 201);
+        $user = $request->user();
+
+        $data = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity'   => 'required|integer|min:1',
+        ]);
+
+        //Update quantity, if the item is already in the cart
+        $cartItem = Cart::where('user_id', $user->id)
+            ->where('product_id', $data['product_id'])
+            ->first();
+
+        if ($cartItem) {
+            $cartItem->update([
+                'quantity' => $cartItem->quantity + $data['quantity'],
+            ]);
+        } else {
+            $cartItem = Cart::create([
+                'user_id'    => $user->id,
+                'product_id' => $data['product_id'],
+                'quantity'   => $data['quantity'],
+            ]);
+        }
+
+        return response()->json($cartItem, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        return Cart::findOrFail($id);
+        $user = $request->user();
+
+        return Cart::where('user_id', $user->id)
+            ->where('id', $id)
+            ->with('product')
+            ->firstOrFail();
     }
 
     /**
@@ -54,17 +86,34 @@ class CartController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $cart = Cart::findOrFail($id);
-        $cart->update($request->all());
-        return response()->json($cart, 200);
+        $user = $request->user();
+
+        $data = $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cartItem = Cart::where('user_id', $user->id)
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $cartItem->update($data);
+
+        return response()->json($cartItem, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        Cart::destroy($id);
+        $user = $request->user();
+
+        $cartItem = Cart::where('user_id', $user->id)
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $cartItem->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -19,6 +19,16 @@ use App\Http\Controllers\AuthApi\PasswordResetController;
 use App\Http\Controllers\AuthApi\LogoutController;
 use App\Http\Controllers\AuthApi\EmailVerificationController;
 
+
+//test
+Route::get('/test', function () {
+    return response()->json([
+        'success' => true,
+        'message' => 'API work!',
+        'timestamp' => now()->toDateTimeString(),
+    ]);
+});
+
 // Auth API для гостей
 Route::prefix('v1/auth')->group(function () {
     Route::post('/register', [RegisterController::class, 'register']);
@@ -53,8 +63,17 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 
 // Admin
 Route::middleware(['auth:sanctum', 'isAdmin'])->prefix('v1/admin')->group(function () {
+    //Users
     Route::get('/users', [AdminUserController::class, 'index']);
     Route::post('/users/{id}/block', [AdminUserController::class, 'block']);
     Route::post('/users/{id}/unblock', [AdminUserController::class, 'unblock']);
+
+    //Categories
+     Route::apiResource('categories', CategoryController::class)
+        ->only(['store', 'update', 'destroy']);
+
+    //Products
+    Route::apiResource('products', CategoryProductController::class)
+        ->only(['store', 'update', 'destroy']);
 });
 

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\OrderProduct;
 use Illuminate\Http\Request;
-use PhpParser\Node\Stmt\Return_;
 use App\Http\Controllers\Controller;
 
 class OrderProductController extends Controller
@@ -14,7 +13,7 @@ class OrderProductController extends Controller
      */
     public function index()
     {
-        return OrderProduct::all();
+        return OrderProduct::with('product', 'order')->get();
     }
 
     /**
@@ -30,8 +29,16 @@ class OrderProductController extends Controller
      */
     public function store(Request $request)
     {
-        $orderProduct = OrderProduct::create($request->all());
-        return response()->json($orderProduct, 201);
+        $data = $request->validate([
+            'order_id'   => 'required|exists:orders,id',
+            'product_id' => 'required|exists:products,id',
+            'price'      => 'required|numeric|min:0',
+            'quantity'   => 'required|integer|min:1',
+        ]);
+
+        $orderProduct = OrderProduct::create($data);
+
+        return response()->json($orderProduct->load('product', 'order'), 201);
     }
 
     /**
@@ -39,7 +46,7 @@ class OrderProductController extends Controller
      */
     public function show($id)
     {
-        return OrderProduct::findOrFail($id);
+        return OrderProduct::with('product', 'order')->findOrFail($id);
     }
 
     /**
@@ -56,8 +63,15 @@ class OrderProductController extends Controller
     public function update(Request $request, $id)
     {
         $orderProduct = OrderProduct::findOrFail($id);
-        $orderProduct->update($request->all());
-        return response()->json($orderProduct, 200);
+
+        $data = $request->validate([
+            'price'    => 'sometimes|required|numeric|min:0',
+            'quantity' => 'sometimes|required|integer|min:1',
+        ]);
+
+        $orderProduct->update($data);
+
+        return response()->json($orderProduct->load('product', 'order'), 200);
     }
 
     /**
@@ -65,7 +79,9 @@ class OrderProductController extends Controller
      */
     public function destroy($id)
     {
-        OrderProduct::destroy($id);
+        $orderProduct = OrderProduct::findOrFail($id);
+        $orderProduct->delete();
+
         return response()->json(null, 204);
     }
 }

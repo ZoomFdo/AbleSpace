@@ -13,7 +13,7 @@ class CouponProductController extends Controller
      */
     public function index()
     {
-        return CouponProduct::all();
+        return CouponProduct::with(['coupon', 'product'])->get();
     }
 
     /**
@@ -29,7 +29,22 @@ class CouponProductController extends Controller
      */
     public function store(Request $request)
     {
-        $couponProduct = CouponProduct::create($request->all());
+        $data = $request->validate([
+            'coupon_id' => 'required|exists:coupons,id',
+            'product_id' => 'required|exists:products,id',
+        ]);
+
+        // Перевірка, щоб уникнути дубліката
+        $exists = CouponProduct::where('coupon_id', $data['coupon_id'])
+            ->where('product_id', $data['product_id'])
+            ->first();
+
+        if ($exists) {
+            return response()->json(['message' => 'Цей купон вже застосований до товару'], 409);
+        }
+
+        $couponProduct = CouponProduct::create($data);
+
         return response()->json($couponProduct, 201);
     }
 
@@ -38,7 +53,7 @@ class CouponProductController extends Controller
      */
     public function show($id)
     {
-        return CouponProduct::findOrFail($id);
+        return CouponProduct::with(['coupon', 'product'])->findOrFail($id);
     }
 
     /**
@@ -50,21 +65,30 @@ class CouponProductController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Оновити зв’язок (змінити товар чи купон).
      */
     public function update(Request $request, $id)
     {
         $couponProduct = CouponProduct::findOrFail($id);
-        $couponProduct->update($request->all());
+
+        $data = $request->validate([
+            'coupon_id' => 'required|exists:coupons,id',
+            'product_id' => 'required|exists:products,id',
+        ]);
+
+        $couponProduct->update($data);
+
         return response()->json($couponProduct, 200);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Видалити зв’язок купон-товар
      */
     public function destroy($id)
     {
-        CouponProduct::destroy($id);
+        $couponProduct = CouponProduct::findOrFail($id);
+        $couponProduct->delete();
+
         return response()->json(null, 204);
     }
 }

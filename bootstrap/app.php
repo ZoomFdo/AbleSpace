@@ -28,11 +28,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // API middleware
         $middleware->api(append: [
         EnsureFrontendRequestsAreStateful::class, //SPA and token
+        //  'throttle:api',
         SubstituteBindings::class,
     ]);
 
-    $middleware->alias('isAdmin', \App\Http\Middleware\IsAdmin::class);
+    $middleware->alias([
+    'isAdmin' => \App\Http\Middleware\IsAdmin::class,
+    ]);
     })
+    
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

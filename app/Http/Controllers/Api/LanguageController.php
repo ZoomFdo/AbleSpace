@@ -13,7 +13,7 @@ class LanguageController extends Controller
      */
     public function index()
     {
-        return Language::all();
+        return response()->json(Language::all(), 200);
     }
 
     /**
@@ -29,8 +29,17 @@ class LanguageController extends Controller
      */
     public function store(Request $request)
     {
-        $language = Language::create($request->all());
-        return response()->json($language, 201);
+        $validated = $request->validate([
+            'code' => 'required|string|max:5|unique:languages,code',
+            'name' => 'required|string|max:100',
+        ]);
+
+        $language = Language::create($validated);
+
+        return response()->json([
+            'message' => 'Language created successfully',
+            'data' => $language,
+        ], 201);
     }
 
     /**
@@ -38,7 +47,9 @@ class LanguageController extends Controller
      */
     public function show($id)
     {
-        return Language::findOrFail($id);
+        $language = Language::findOrFail($id);
+
+        return response()->json($language, 200);
     }
 
     /**
@@ -55,8 +66,18 @@ class LanguageController extends Controller
     public function update(Request $request, $id)
     {
         $language = Language::findOrFail($id);
-        $language->update($request->all());
-        return response()->json($language, 200);
+
+        $validated = $request->validate([
+            'code' => 'sometimes|string|max:5|unique:languages,code,' . $id,
+            'name' => 'sometimes|string|max:100',
+        ]);
+
+        $language->update($validated);
+
+        return response()->json([
+            'message' => 'Language updated successfully',
+            'data' => $language,
+        ], 200);
     }
 
     /**
@@ -64,7 +85,11 @@ class LanguageController extends Controller
      */
     public function destroy($id)
     {
-        Language::destroy($id);
-        return response()->json(null, 204);
+        $language = Language::findOrFail($id);
+        $language->delete();
+
+        return response()->json([
+            'message' => 'Language deleted successfully'
+        ], 204);
     }
 }

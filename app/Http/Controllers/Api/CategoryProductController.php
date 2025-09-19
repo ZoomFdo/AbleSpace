@@ -13,7 +13,7 @@ class CategoryProductController extends Controller
      */
     public function index()
     {
-        return CategoryProduct::all();
+        return CategoryProduct::with(['category', 'product'])->paginate(10);
     }
 
     /**
@@ -29,7 +29,23 @@ class CategoryProductController extends Controller
      */
     public function store(Request $request)
     {
-        $categoryProduct = CategoryProduct::create($request->all());
+        //Validate
+        $data = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'product_id'  => 'required|exists:products,id',
+        ]);
+
+        //Preventing duplicate connections
+        $exists = CategoryProduct::where('category_id', $data['category_id'])
+            ->where('product_id', $data['product_id'])
+            ->exists();
+
+        if ($exists) {
+            return response()->json(['message' => 'This relation already exists'], 409);
+        }
+
+        $categoryProduct = CategoryProduct::create($data);
+
         return response()->json($categoryProduct, 201);
     }
 
@@ -38,7 +54,7 @@ class CategoryProductController extends Controller
      */
     public function show($id)
     {
-        return CategoryProduct::findOrFail($id);
+        return CategoryProduct::with(['category', 'product'])->findOrFail($id);
     }
 
     /**
@@ -55,7 +71,15 @@ class CategoryProductController extends Controller
     public function update(Request $request, $id)
     {
         $categoryProduct = CategoryProduct::findOrFail($id);
-        $categoryProduct->update($request->all());
+
+        //Validate
+        $data = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'product_id'  => 'required|exists:products,id',
+        ]);
+
+        $categoryProduct->update($data);
+
         return response()->json($categoryProduct, 200);
     }
 

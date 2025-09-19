@@ -16,26 +16,32 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $table = 'users';
     protected $primaryKey = 'user_id';
 
+    public const CREATED_AT = 'created_date';
+    public const UPDATED_AT = 'updated_date';
+
     protected $fillable = [
         'name', 'surname', 'registration_date', 'last_seen', 'is_active',
         'method', 'identifier', 'email', 'phone',
         'is_email_verified', 
         'created_date', 'updated_date', 'last_password_change',
-        'failed_attempts', 'locked_until', 'mfa_secret',
+        'failed_attempts', 'locked_until', 'mfa_secret', 'is_blocked',
     ];
 
     protected $casts = [
         'is_active'            => 'boolean',
         'is_email_verified'    => 'boolean',
+        'is_blocked'           => 'boolean',
         'registration_date'    => 'datetime',
         'last_seen'            => 'datetime',
         'created_date'         => 'datetime',
         'updated_date'         => 'datetime',
         'last_password_change' => 'datetime',
         'locked_until'         => 'datetime',
-        'failed_attempts'      => 'integer'
+        'failed_attempts'      => 'integer',
+        'email_verified_at'    => 'datetime',
     ];
 
+    //
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_user_role', 'user_id', 'role_id');
