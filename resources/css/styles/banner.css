@@ -1,0 +1,97 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #ffffff 50%, #e8f0fe 100%);
+  padding: 50px 60px;
+}
+
+.banner-container {
+  width: 100vw; 
+  margin-left: calc(-50vw + 50%); 
+  overflow: visible;
+  position: relative;
+  z-index: 1;  
+}
+
+.banner-section {
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 0;
+  overflow: visible;
+  background-color: #f5f7fa;
+  z-index: 1;
+}
+
+/* Swiper контейнер - додано для повної висоти */
+.swiper {
+  width: 100vw;
+  height: 100%; 
+}
+
+.swiper-wrapper {
+  height: 100%; 
+}
+
+/*new */
+.banner-slide {
+  width: 100vw; 
+  height: 70vh;
+  min-height: 600px; 
+  max-height: 1000px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: visible;
+}
+
+.banner-slide img {
+  width: 100vw;
+  height: 100%; 
+  object-fit: cover;
+  object-position: center;    
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  z-index: 1;
+}
+
+
+
+/*new */
+
+/* Пагінація Swiper */
+.swiper-pagination-bullet {
+  background-color: #0047ab;
+  opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+  .banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 30px 20px;
+  }
+
+  .banner-slide {
+    height: 50vh; 
+    min-height: 300px;
+    max-height: 500px;
+  }
+
+  .banner-content {
+    max-width: 100%;
+  }
+
+  .banner-img {
+    max-width: 100%;
+    margin-top: 20px;
+  }
+}
