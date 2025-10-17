@@ -24,18 +24,18 @@ class Product extends Model
         'attributes' => 'array',
     ];
 
-     public function reviews()
-    {
-        return $this->hasMany(Review::class, 'product_id');
-    }
+    // public function reviews()
+    // {
+    //     return $this->hasMany(Review::class, 'product_id');
+    // }
 
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class, 'product_category', 'product_id', 'category_id');
-    }
+    // public function categories()
+    // {
+    //     return $this->belongsToMany(Category::class, 'product_category', 'product_id', 'category_id');
+    // }
 
-    public function orderProducts()
-    {
-        return $this->hasMany(OrderProduct::class, 'product_id');
-    }
+    // public function orderProducts()
+    // {
+    //     return $this->hasMany(OrderProduct::class, 'product_id');
+    // }
 }

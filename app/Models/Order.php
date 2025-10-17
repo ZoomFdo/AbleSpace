@@ -16,15 +16,15 @@ class Order extends Model
     protected $table = 'order';
     protected $primaryKey = 'order_id';
 
-     protected $fillable = ['user_id', 'total_price', 'status', 'address', 'coupon_id'];
+    protected $fillable = ['user_id', 'total_price', 'status', 'address', 'coupon_id'];
 
-    public function products()
-    {
-        return $this->hasMany(OrderProduct::class, 'order_id');
-    }
+    // public function products()
+    // {
+    //     return $this->hasMany(OrderProduct::class, 'order_id');
+    // }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
 }

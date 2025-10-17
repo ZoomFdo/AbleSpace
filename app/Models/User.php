@@ -3,72 +3,48 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable; // замінюємо базовий клас
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Contracts\Auth\MustVerifyEmail; // додаємо інтерфейс
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'users';
-    protected $primaryKey = 'user_id';
-
+    protected $primaryKey = 'id'; 
     public const CREATED_AT = 'created_date';
     public const UPDATED_AT = 'updated_date';
 
     protected $fillable = [
-        'name', 'surname', 'registration_date', 'last_seen', 'is_active',
-        'method', 'identifier', 'email', 'phone',
-        'is_email_verified', 
-        'created_date', 'updated_date', 'last_password_change',
+        'name', 'surname', 'email', 'phone', 'is_active', 'is_email_verified',
+        'created_date', 'updated_date', 'password', 'registration_date',
+        'last_seen', 'method', 'identifier', 'last_password_change',
         'failed_attempts', 'locked_until', 'mfa_secret', 'is_blocked',
     ];
 
     protected $casts = [
-        'is_active'            => 'boolean',
-        'is_email_verified'    => 'boolean',
-        'is_blocked'           => 'boolean',
-        'registration_date'    => 'datetime',
-        'last_seen'            => 'datetime',
-        'created_date'         => 'datetime',
-        'updated_date'         => 'datetime',
+        'is_active' => 'boolean',
+        'is_email_verified' => 'boolean',
+        'is_blocked' => 'boolean',
+        'created_date' => 'datetime',
+        'updated_date' => 'datetime',
+        'registration_date' => 'datetime',
+        'last_seen' => 'datetime',
         'last_password_change' => 'datetime',
-        'locked_until'         => 'datetime',
-        'failed_attempts'      => 'integer',
-        'email_verified_at'    => 'datetime',
+        'locked_until' => 'datetime',
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
-    //
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'user_user_role', 'user_id', 'role_id');
-    }
+    protected $with = [];
 
-    public function auth()
-    {
-        return $this->hasMany(UserAuth::class, 'user_id');
-    }
+    protected $visible = [
+        'user_id', 'name', 'surname', 'email', 'phone',
+        'is_active', 'is_email_verified', 'created_date', 'updated_date'
+    ];
 
-    public function reviews()
-    {
-        return $this->hasMany(Review::class, 'user_id');
-    }
-
-    public function cart()
-    {
-        return $this->hasOne(Cart::class, 'user_id');
-    }
-
-    public function orders()
-    {
-        return $this->hasMany(Order::class, 'user_id');
-    }
-
-    public function accessibilitySettings()
-    {
-        return $this->hasOne(AccessibilitySettings::class, 'user_id');
-    }
+    protected $hidden = [
+        'password', 'remember_token', 'mfa_secret'
+    ];
 }

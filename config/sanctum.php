@@ -35,7 +35,7 @@ return [
     |
     */
 
-    'guard' => ['api'],
+    'guard' => ['web'], // trying web insted api, and it was working
 
     /*
     |--------------------------------------------------------------------------

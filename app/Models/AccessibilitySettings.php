@@ -19,8 +19,8 @@ class AccessibilitySettings extends Model
 
     protected $fillable = ['user_id', 'theme', 'text_size', 'voice_enabled'];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
 }

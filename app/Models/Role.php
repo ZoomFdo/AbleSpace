@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Role extends Model
 {
-    /** @use HasFactory<\Database\Factories\RoleFactory> */
     use HasFactory;
 
     protected $table = 'user_role';
@@ -16,8 +15,11 @@ class Role extends Model
 
     protected $fillable = ['role_name'];
 
+    // ❌ Закомментируй отношение
+    /*
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_user_role', 'role_id', 'user_id');
     }
+    */
 }

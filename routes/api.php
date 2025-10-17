@@ -2,78 +2,51 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Api\AccessibilitySettingsController;
-use App\Http\Controllers\Api\CartProductController;
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\CategoryProductController;
-use App\Http\Controllers\Api\CouponProductController;
-use App\Http\Controllers\Api\LanguageController;
-use App\Http\Controllers\Api\OrderProductController;
-use App\Http\Controllers\Api\RoleController;
-use App\Http\Controllers\Api\RoleUserController;
-use App\Http\Controllers\Api\ProfileController;
-use App\Http\Controllers\AuthApi\RegisterController;
-use App\Http\Controllers\AuthApi\LoginController;
-use App\Http\Controllers\AuthApi\PasswordResetController;
-use App\Http\Controllers\AuthApi\LogoutController;
-use App\Http\Controllers\AuthApi\EmailVerificationController;
+use Laravel\Sanctum\PersonalAccessToken;
 
-
-//test
 Route::get('/test', function () {
-    return response()->json([
-        'success' => true,
-        'message' => 'API work!',
-        'timestamp' => now()->toDateTimeString(),
-    ]);
+    return response()->json(['message' => 'API works!']);
 });
 
-// Auth API для гостей
-Route::prefix('v1/auth')->group(function () {
-    Route::post('/register', [RegisterController::class, 'register']);
-    Route::post('/login', [LoginController::class, 'login']);
-    Route::post('/password/email', [PasswordResetController::class, 'sendResetLink']);
-    Route::post('/password/reset', [PasswordResetController::class, 'reset']);
-    Route::get('/verify-email', [EmailVerificationController::class, 'verify']);
+Route::prefix('v1')->group(function () {
+    Route::get('/debug', function (Request $request) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Тест без auth',
+            'user' => $request->user() ? 'Authenticated' : 'Not authenticated',
+            'timestamp' => now()->toDateTimeString()
+        ]);
+    });
+
+    Route::middleware(['log.auth', 'auth:sanctum'])->get('/me', function (Request $request) {
+        try {
+            $token = PersonalAccessToken::findToken($request->bearerToken());
+            if (!$token) {
+                return response()->json(['success' => false, 'message' => 'Invalid token'], 401);
+            }
+            $user = $token->tokenable;
+            if (!$user) {
+                return response()->json(['success' => false, 'message' => 'User not found'], 401);
+            }
+            return response()->json([
+                'success' => true,
+                'user_id' => $user->id, // changed to id
+                'email' => $user->email,
+                'timestamp' => now()->toDateTimeString()
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error in /me', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'error' => 'Server error',
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
+        }
+    });
 });
-
-// Authenticated API (Sanctum)
-Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
-    Route::get('/me', fn(Request $request) => $request->user());
-    Route::post('/logout', [LogoutController::class, 'logout']);
-    Route::post('/email/verify/resend', [EmailVerificationController::class, 'resend']);
-
-     // Профіль
-    Route::get('/profile', [ProfileController::class, 'show']);
-    Route::put('/profile', [ProfileController::class, 'update']);
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
-
-    // CRUD ресурси
-    Route::apiResource('accessibility-settings', AccessibilitySettingsController::class);
-    Route::apiResource('cart-products', CartProductController::class);
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('category-products', CategoryProductController::class);
-    Route::apiResource('coupon-products', CouponProductController::class);
-    Route::apiResource('languages', LanguageController::class);
-    Route::apiResource('order-products', OrderProductController::class);
-    Route::apiResource('roles', RoleController::class);
-    Route::apiResource('role-users', RoleUserController::class);
-});
-
-// Admin
-Route::middleware(['auth:sanctum', 'isAdmin'])->prefix('v1/admin')->group(function () {
-    //Users
-    Route::get('/users', [AdminUserController::class, 'index']);
-    Route::post('/users/{id}/block', [AdminUserController::class, 'block']);
-    Route::post('/users/{id}/unblock', [AdminUserController::class, 'unblock']);
-
-    //Categories
-     Route::apiResource('categories', CategoryController::class)
-        ->only(['store', 'update', 'destroy']);
-
-    //Products
-    Route::apiResource('products', CategoryProductController::class)
-        ->only(['store', 'update', 'destroy']);
-});
-
